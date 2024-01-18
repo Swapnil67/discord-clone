@@ -6,3 +6,4 @@
   - MySQL
   - Prisma ORM
   - ClerkJS
+  - Shadcn UI
