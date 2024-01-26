@@ -90,6 +90,7 @@ const InitialModal = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        {...form.register('name')}
                         disabled={isLoading}
                         className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                         placeholder="Enter server name"
@@ -102,7 +103,7 @@ const InitialModal = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button disabled={isLoading} variant="primary">
+              <Button disabled={isLoading} type="submit" variant="primary">
                 Create
               </Button>
             </DialogFooter>
