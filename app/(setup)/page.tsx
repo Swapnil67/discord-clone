@@ -23,11 +23,11 @@ const SetupPage = async () => {
     }
   })
 
-  console.log("server: ", server);
+  // console.log("server: ", server);
   
 
   if(server) {
-    return redirect(`/servers/$${server.id}`);
+    return redirect(`/servers/${server.id}`);
   }
 
   return (
