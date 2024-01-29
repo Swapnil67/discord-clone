@@ -80,6 +80,10 @@ body,
   .app-danger {
     @apply text-rose-500
   }
+
+  .app-icon {
+    @apply h-4 w-4
+  }
 }
  
 @layer base {
