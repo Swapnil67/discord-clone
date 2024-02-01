@@ -12,7 +12,7 @@ interface InviteCodePageProps {
 
 const InviteCodePage = async (props: InviteCodePageProps) => {
   const { params } = props;
-  const profile = await currentProfile();
+  const profile = await currentProfile();  
 
   if(!profile) {
     return <RedirectToSignIn/>
@@ -22,6 +22,7 @@ const InviteCodePage = async (props: InviteCodePageProps) => {
     return redirect("/");
   }
 
+  // * Check if player already exists in server
   const existingServer = await db.server.findFirst({
     where: {
       inviteCode: params.inviteCode,
@@ -37,6 +38,7 @@ const InviteCodePage = async (props: InviteCodePageProps) => {
     return redirect(`/servers/${existingServer.id}`);
   }
 
+  // * If not then create new server and add Member
   const server = await db.server.update({
     where: {
       inviteCode: params.inviteCode
@@ -53,7 +55,7 @@ const InviteCodePage = async (props: InviteCodePageProps) => {
   })
 
   if(server) {
-    return redirect(`/server/${server.id}`);
+    return redirect(`/servers/${server.id}`);
   }
 
   return null;

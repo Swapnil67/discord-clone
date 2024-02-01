@@ -1,5 +1,6 @@
 "use client";
 
+import { ShieldCheck, ShieldAlert, MoreVertical, ShieldQuestion, Shield, Check } from "lucide-react";
 import React, { useState } from "react";
 
 import {
@@ -14,7 +15,19 @@ import { useModal } from "@/hooks/use-modal-store";
 import { ServerWithMembersWithProfiles } from "@/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import UserAvatar from "@/components/user-avatar";
-import { ShieldCheck } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuSub,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger
+} from '@/components/ui/dropdown-menu'
+
 
 const roleIconMap = {
   GUEST: null,
@@ -24,6 +37,7 @@ const roleIconMap = {
 
 const MembersModal = () => {
   const { onOpen, isOpen, onClose, type, data } = useModal();
+  const [loadingId, setLoadingId] = useState("");
 
   const isModalOpen = isOpen && type === "members";
   const { server } = data as { server: ServerWithMembersWithProfiles };
@@ -51,6 +65,40 @@ const MembersModal = () => {
                   </div>
                   <p className="text-xs text-zinc-500">{member.profile.email}</p>
                 </div>
+                {
+                  server.profileId !== member.profileId && loadingId !== member.id && (
+                    <div className="ml-auto">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger>
+                          <MoreVertical className="app-icon text-zinc-500" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent side="left">
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger className="flex items-center">
+                              <ShieldQuestion className="app-icon mr-2" />
+                              <span>Role</span>
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                              <DropdownMenuSubContent>
+                                <DropdownMenuItem>
+                                  <Shield className="app-icon mr-4" />
+                                  Guest
+                                  {
+                                    member.role === "GUEST" && (
+                                      <Check 
+                                      className="app-icon ml-auto"
+                                      />
+                                    )
+                                  }
+                                </DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                          </DropdownMenuSub>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )
+                }
               </div>
             );
           })}
