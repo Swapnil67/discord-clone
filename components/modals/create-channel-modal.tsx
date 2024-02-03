@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import * as z from "zod";
 import axios from "axios";
@@ -59,15 +59,23 @@ const CreateChannelModal = () => {
   const params = useParams();
 
   const isModalOpen = isOpen && type === "createChannel";
-  const { server } = data as { server: ServerWithMembersWithProfiles };
+  const { channelType } = data;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      type: ChannelType.Text,
+      type: channelType || ChannelType.Text,
     },
   });
+
+  useEffect(() => {
+    if(channelType) {
+      form.setValue('type', channelType);
+    } else {
+      form.setValue('type', ChannelType.Text);
+    }
+  }, [form, channelType])
 
   const isLoading = form.formState.isSubmitting;
 
