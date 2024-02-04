@@ -89,6 +89,10 @@ body,
     @apply group-hover:text-zinc-600 dark:group-hover:text-zinc-300
   }
 
+  .app-bg_light_dark {
+    @apply bg-[#E3E5E8] dark:bg-[#1E1F22]
+  }
+
   .app-danger {
     @apply text-rose-500
   }
