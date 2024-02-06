@@ -39,7 +39,7 @@ const ServerHeader = (props: ServerHeaderProps) => {
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none" asChild>
         <button
-          className="w-full text-md font-semibold px-3 flex items-center border-neutral-200
+          className="w-full text-md font-semibold px-3 h-12 flex items-center border-neutral-200
          dark:border-neutral-800 border-b-2 hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition"
         >
           {server.name}
