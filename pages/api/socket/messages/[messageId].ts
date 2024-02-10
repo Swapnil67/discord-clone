@@ -8,12 +8,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponseServerIo
 ) {
+  
   if (req.method !== "DELETE" && req.method !== "PATCH") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const profile = await currentProfilePages(req);
+    const profile = await currentProfilePages(req);    
     if (!profile) {
       return res.status(401).json({ error: "Unauthorized" });
     }
@@ -27,10 +28,6 @@ export default async function handler(
 
     if (!serverId) {
       return res.status(400).json({ message: "Server ID Missing" });
-    }
-
-    if (!content) {
-      return res.status(400).json({ message: "Content Missing" });
     }
 
     // * Find ther server
@@ -47,6 +44,8 @@ export default async function handler(
         members: true,
       },
     });
+    console.log("server: ", server);
+    
     if (!server) {
       return res.status(404).json({ error: "Server not found" });
     }
@@ -58,6 +57,8 @@ export default async function handler(
         serverId: serverId as string,
       },
     });
+    console.log("channel: ", channel);
+
     if (!channel) {
       return res.status(404).json({ error: "Channel not found" });
     }
@@ -66,6 +67,8 @@ export default async function handler(
     const member = server.members.find(
       (member) => member.profileId === profile.id
     );
+    console.log("member: ", member);
+
     if (!member) {
       return res.status(404).json({ error: "Member not found" });
     }

@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Member, MemberRole, Profile } from "@prisma/client";
 import { Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useRouter, useParams } from 'next/navigation';
 import Image from "next/image";
 
 import UserAvatar from "@/components/user-avatar";
@@ -16,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Form, FormItem, FormField, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useModal } from "@/hooks/use-modal-store";
 
 interface ChatItemProps {
   id: string;
@@ -56,8 +58,11 @@ const ChatItem = (props: ChatItemProps) => {
     currentMember,
   } = props;
 
+  // ** States
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+
+  // * hooks
+  const { onOpen } = useModal();
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -76,6 +81,16 @@ const ChatItem = (props: ChatItemProps) => {
     },
   });
   const isLoading = form.formState.isSubmitting;
+
+  const params = useParams();
+  const router = useRouter();
+
+  const onMemberClick = () => {
+    if(member.id === currentMember.id) {
+      return;
+    }
+    router.push(`/servers/${params?.serverId}/conversations/${member.id}`)
+  }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("values: ", values);
@@ -116,14 +131,14 @@ const ChatItem = (props: ChatItemProps) => {
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
       <div className="group flex gap-x-2 items-start w-full">
         {/* Avatar */}
-        <div className="cursor-pointer hover:drop-shadow-md transition">
+        <div onClick={onMemberClick} className="cursor-pointer hover:drop-shadow-md transition">
           <UserAvatar src={member.profile.imageUrl} />
         </div>
 
         <div className="flex flex-col w-full">
           <div className="fkex items-center gap-x-2">
             <div className="flex items-center">
-              <p className="font-semibold text-sm hover:underline cursor-pointer">
+              <p onClick={onMemberClick} className="font-semibold text-sm hover:underline cursor-pointer">
                 {member.profile.name}
               </p>
               <ActionTooltip label={member.role}>
@@ -228,7 +243,10 @@ const ChatItem = (props: ChatItemProps) => {
           )}
           <ActionTooltip label="Delete">
             <Trash
-              onClick={() => setIsDeleting(true)}
+            onClick={() => onOpen('deleteMessage',  { 
+              apiUrl: `${socketUrl}/${id}`,
+              query: socketQuery
+             })}
               className="cursor-pointer app-icon ml-auto app-text_light500_dark600 app-text-hover_light600_dark300"
             />
           </ActionTooltip>
