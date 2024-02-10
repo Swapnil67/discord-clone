@@ -6,19 +6,12 @@ import qs from "query-string";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  Form,
-  FormItem,
-  FormField,
-  FormLabel,
-  FormMessage,
-  FormControl,
-  FormDescription,
-} from "@/components/ui/form";
+import { Form, FormItem, FormField, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Plus, Smile } from "lucide-react";
+import { Plus  } from "lucide-react";
 import { useModal } from "@/hooks/use-modal-store";
+import EmojiPicker from "@/components/emoji-picker";
+import { useRouter } from "next/navigation";
 
 interface ChatInputProps {
   apiUrl: string;
@@ -33,6 +26,7 @@ const formSchema = z.object({
 
 const ChatInput = (props: ChatInputProps) => {
   const { apiUrl, query, name, type } = props;
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,18 +37,19 @@ const ChatInput = (props: ChatInputProps) => {
 
   const isLoading = form.formState.isSubmitting;
 
- const { onOpen } =  useModal();
+  const { onOpen } = useModal();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const url = qs.stringifyUrl({
         url: apiUrl,
-        query
-      })
+        query,
+      });
       await axios.post(url, values);
+      form.reset();
+      router.refresh();
     } catch (err) {
       console.log("Error ", err);
-      
     }
   };
 
@@ -70,7 +65,7 @@ const ChatInput = (props: ChatInputProps) => {
                 <div className="relative p-4 pb-6">
                   <button
                     type="button"
-                    onClick={() => onOpen('messageFile', { apiUrl, query })}
+                    onClick={() => onOpen("messageFile", { apiUrl, query })}
                     className="absolute top-7 left-8 h-[24px] w-[24px] app-bg_light500_dark400 app-bg-hover_light600_dark300 transition rounded-full p-1 flex items-center justify-center"
                   >
                     <Plus className="text-white dark:text-[#313338]" />
@@ -84,7 +79,11 @@ const ChatInput = (props: ChatInputProps) => {
                     className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-offset-0 app-text_light600_dark200"
                   />
                   <div className="absolute top-7 right-8">
-                    <Smile />
+                    <EmojiPicker
+                      onChange={(emoji: string) =>
+                        field.onChange(`${field.value} ${emoji}`)
+                      }
+                    />
                   </div>
                 </div>
               </FormControl>
